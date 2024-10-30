@@ -1,130 +1,129 @@
-// JavaScript Tic-Tac-Toe Game Logic with Player Choice and Basic AI
-const cells = document.querySelectorAll('.cell');
-const statusDisplay = document.getElementById('status');
+const boardElement = document.getElementById('board');
+const statusElement = document.getElementById('status');
 const resetButton = document.getElementById('reset');
-const playerSelection = document.getElementById('playerSelection');
-const chooseXButton = document.getElementById('chooseX');
-const chooseOButton = document.getElementById('chooseO');
-const board = document.getElementById('board');
+const playerXButton = document.getElementById('playerX');
+const playerOButton = document.getElementById('playerO');
+const toggleThemeButton = document.getElementById('toggleTheme');
 
-let currentPlayer;
-let playerSymbol;
-let aiSymbol;
-let gameActive = true;
-let boardState = ['', '', '', '', '', '', '', '', ''];
+let board = ['', '', '', '', '', '', '', '', ''];
+let currentPlayer = 'X';
+let isGameActive = true;
+let isDarkTheme = false;
 
-// Win conditions: indexes of cells for each winning combination
-const winningConditions = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6]
-];
-
-// Initialize the game based on player choice
-function initializeGame(symbol) {
-  playerSymbol = symbol;
-  aiSymbol = playerSymbol === 'X' ? 'O' : 'X';
-  currentPlayer = playerSymbol; // Set currentPlayer to player's choice
-  statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
-  statusDisplay.style.display = 'block';
-  board.style.display = 'grid';
-  resetButton.style.display = 'block';
-  playerSelection.style.display = 'none';
-}
-
-// Handle player symbol selection
-chooseXButton.addEventListener('click', () => initializeGame('X'));
-chooseOButton.addEventListener('click', () => initializeGame('O'));
-
-// Handle player turn
+// Function to handle cell click
 function handleCellClick(event) {
-  const cell = event.target;
-  const cellIndex = cell.getAttribute('data-index');
+    const cell = event.target;
+    const cellIndex = cell.getAttribute('data-cell-index');
 
-  if (boardState[cellIndex] !== '' || !gameActive || currentPlayer !== playerSymbol) return;
-
-  boardState[cellIndex] = currentPlayer;
-  cell.textContent = currentPlayer;
-
-  checkGameResult();
-  if (gameActive) {
-    currentPlayer = aiSymbol;
-    statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
-    setTimeout(handleAIMove, 500); // AI move after delay
-  }
-}
-
-// Check for win or tie
-function checkGameResult() {
-  let roundWon = false;
-
-  for (let condition of winningConditions) {
-    const [a, b, c] = condition;
-    if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-      roundWon = true;
-      [a, b, c].forEach(index => cells[index].classList.add('winning'));
-      break;
+    if (board[cellIndex] !== '' || !isGameActive) {
+        return;
     }
-  }
 
-  if (roundWon) {
-    statusDisplay.textContent = `Player ${currentPlayer} wins!`;
-    gameActive = false;
-    return;
-  }
+    board[cellIndex] = currentPlayer;
+    cell.textContent = currentPlayer;
+    cell.classList.add(currentPlayer === 'X' ? 'cell-x' : 'cell-o');
+    cell.classList.add('fade-in');
 
-  if (!boardState.includes('')) {
-    statusDisplay.textContent = 'It\'s a tie!';
-    gameActive = false;
-    return;
-  }
-
-  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-  statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+    checkResult();
 }
 
-// Handle AI move
-function handleAIMove() {
-  if (!gameActive) return;
+// Function to check for a win or tie
+function checkResult() {
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
 
-  const emptyCells = boardState
-    .map((value, index) => (value === '' ? index : null))
-    .filter(index => index !== null);
+    let roundWon = false;
 
-  if (emptyCells.length > 0) {
-    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    boardState[randomIndex] = currentPlayer;
-    cells[randomIndex].textContent = currentPlayer;
-
-    checkGameResult();
-    if (gameActive) {
-      currentPlayer = playerSymbol;
-      statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+    for (const condition of winningConditions) {
+        const [a, b, c] = condition;
+        if (board[a] === '' || board[b] === '' || board[c] === '') {
+            continue;
+        }
+        if (board[a] === board[b] && board[a] === board[c]) {
+            roundWon = true;
+            break;
+        }
     }
-  }
+
+    if (roundWon) {
+        statusElement.textContent = `Player ${currentPlayer} wins!`;
+        isGameActive = false;
+        highlightWinningCells(condition);
+        return;
+    }
+
+    if (!board.includes('')) {
+        statusElement.textContent = 'It\'s a tie!';
+        isGameActive = false;
+        return;
+    }
+
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    statusElement.textContent = `Player ${currentPlayer}'s turn`;
+
+    // AI turn after player
+    if (isGameActive && currentPlayer === 'O') {
+        aiTurn();
+    }
 }
 
-// Reset the game
+// Function to highlight winning cells
+function highlightWinningCells(condition) {
+    condition.forEach(index => {
+        const cell = document.querySelector(`.cell[data-cell-index="${index}"]`);
+        cell.classList.add('winning');
+    });
+}
+
+// Function for AI to make a random move
+function aiTurn() {
+    const availableCells = board.map((value, index) => value === '' ? index : null).filter(v => v !== null);
+    const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+    
+    if (randomCell !== undefined) {
+        board[randomCell] = 'O';
+        const cell = document.querySelector(`.cell[data-cell-index="${randomCell}"]`);
+        cell.textContent = 'O';
+        cell.classList.add('cell-o', 'fade-in');
+        checkResult();
+    }
+}
+
+// Function to reset the game
 function resetGame() {
-  currentPlayer = playerSymbol; // Reset to player's turn
-  gameActive = true;
-  boardState = ['', '', '', '', '', '', '', '', ''];
-  statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
-  cells.forEach(cell => {
-    cell.textContent = '';
-    cell.classList.remove('winning');
-  });
-  playerSelection.style.display = 'block';
-  board.style.display = 'none';
-  resetButton.style.display = 'none';
-  statusDisplay.style.display = 'none';
+    isGameActive = true;
+    currentPlayer = 'X';
+    board = ['', '', '', '', '', '', '', '', ''];
+    statusElement.textContent = "Player X's turn";
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('cell-x', 'cell-o', 'winning');
+    });
 }
 
-// Event listeners for each cell and reset button
-cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+// Function to toggle themes
+function toggleTheme() {
+    isDarkTheme = !isDarkTheme;
+    document.body.className = isDarkTheme ? 'dark' : 'default';
+}
+
+// Event listeners
+boardElement.addEventListener('click', handleCellClick);
 resetButton.addEventListener('click', resetGame);
+toggleThemeButton.addEventListener('click', toggleTheme);
+playerXButton.addEventListener('click', () => {
+    currentPlayer = 'X';
+    resetGame();
+});
+playerOButton.addEventListener('click', () => {
+    currentPlayer = 'O';
+    resetGame();
+});

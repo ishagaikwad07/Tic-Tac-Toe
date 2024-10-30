@@ -1,37 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tic-Tac-Toe Game</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Tic-Tac-Toe</title>
 </head>
 <body>
-  <div class="game-container">
-    <h1>Tic-Tac-Toe</h1>
-    
-    <!-- Player Selection Section -->
-    <div class="player-selection" id="playerSelection">
-      <p>Choose your symbol:</p>
-      <button id="chooseX">Play as X</button>
-      <button id="chooseO">Play as O</button>
+    <div class="game-container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="player-selection">
+            <p>Select your symbol:</p>
+            <button id="playerX">X</button>
+            <button id="playerO">O</button>
+        </div>
+        <div class="status" id="status">Player X's turn</div>
+        <div class="board" id="board">
+            <div class="cell" data-cell-index="0"></div>
+            <div class="cell" data-cell-index="1"></div>
+            <div class="cell" data-cell-index="2"></div>
+            <div class="cell" data-cell-index="3"></div>
+            <div class="cell" data-cell-index="4"></div>
+            <div class="cell" data-cell-index="5"></div>
+            <div class="cell" data-cell-index="6"></div>
+            <div class="cell" data-cell-index="7"></div>
+            <div class="cell" data-cell-index="8"></div>
+        </div>
+        <button id="reset">Reset Game</button>
     </div>
-
-    <!-- Game Status and Board -->
-    <div class="status" id="status" style="display: none;">Player X's turn</div>
-    <div class="board" id="board" style="display: none;">
-      <div class="cell" data-index="0"></div>
-      <div class="cell" data-index="1"></div>
-      <div class="cell" data-index="2"></div>
-      <div class="cell" data-index="3"></div>
-      <div class="cell" data-index="4"></div>
-      <div class="cell" data-index="5"></div>
-      <div class="cell" data-index="6"></div>
-      <div class="cell" data-index="7"></div>
-      <div class="cell" data-index="8"></div>
-    </div>
-    <button id="reset" style="display: none;">Restart Game</button>
-  </div>
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
