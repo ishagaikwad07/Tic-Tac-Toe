@@ -29,7 +29,7 @@ const winningConditions = [
 function initializeGame(symbol) {
   playerSymbol = symbol;
   aiSymbol = playerSymbol === 'X' ? 'O' : 'X';
-  currentPlayer = 'X'; // X always starts
+  currentPlayer = playerSymbol; // Set currentPlayer to player's choice
   statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
   statusDisplay.style.display = 'block';
   board.style.display = 'grid';
@@ -111,7 +111,7 @@ function handleAIMove() {
 
 // Reset the game
 function resetGame() {
-  currentPlayer = 'X';
+  currentPlayer = playerSymbol; // Reset to player's turn
   gameActive = true;
   boardState = ['', '', '', '', '', '', '', '', ''];
   statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
