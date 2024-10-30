@@ -1,3 +1,4 @@
+/* Base styles */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -27,6 +28,23 @@
     font-size: 18px;
   }
   
+  /* Player selection styling */
+  .player-selection {
+    margin-bottom: 20px;
+  }
+  
+  .player-selection p {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .player-selection button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+  
+  /* Board and cell styling */
   .board {
     display: grid;
     grid-template-columns: repeat(3, 100px);
@@ -46,17 +64,15 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
   
-  /* Hover effect */
   .cell:hover {
     background-color: #e0e0e0;
   }
   
-  /* Scale-up effect on click */
   .cell:active {
     transform: scale(1.1);
   }
   
-  /* Highlight winning cells */
+  /* Winning cell effect */
   .cell.winning {
     background-color: #ffd700;
     animation: highlight 0.5s ease-in-out infinite alternate;

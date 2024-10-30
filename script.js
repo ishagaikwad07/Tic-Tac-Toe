@@ -1,9 +1,15 @@
-// JavaScript Tic-Tac-Toe Game Logic with Basic AI
+// JavaScript Tic-Tac-Toe Game Logic with Player Choice and Basic AI
 const cells = document.querySelectorAll('.cell');
 const statusDisplay = document.getElementById('status');
 const resetButton = document.getElementById('reset');
+const playerSelection = document.getElementById('playerSelection');
+const chooseXButton = document.getElementById('chooseX');
+const chooseOButton = document.getElementById('chooseO');
+const board = document.getElementById('board');
 
-let currentPlayer = 'X';
+let currentPlayer;
+let playerSymbol;
+let aiSymbol;
 let gameActive = true;
 let boardState = ['', '', '', '', '', '', '', '', ''];
 
@@ -19,19 +25,35 @@ const winningConditions = [
   [2, 4, 6]
 ];
 
+// Initialize the game based on player choice
+function initializeGame(symbol) {
+  playerSymbol = symbol;
+  aiSymbol = playerSymbol === 'X' ? 'O' : 'X';
+  currentPlayer = 'X'; // X always starts
+  statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+  statusDisplay.style.display = 'block';
+  board.style.display = 'grid';
+  resetButton.style.display = 'block';
+  playerSelection.style.display = 'none';
+}
+
+// Handle player symbol selection
+chooseXButton.addEventListener('click', () => initializeGame('X'));
+chooseOButton.addEventListener('click', () => initializeGame('O'));
+
 // Handle player turn
 function handleCellClick(event) {
   const cell = event.target;
   const cellIndex = cell.getAttribute('data-index');
 
-  if (boardState[cellIndex] !== '' || !gameActive || currentPlayer === 'O') return;
+  if (boardState[cellIndex] !== '' || !gameActive || currentPlayer !== playerSymbol) return;
 
   boardState[cellIndex] = currentPlayer;
   cell.textContent = currentPlayer;
 
   checkGameResult();
   if (gameActive) {
-    currentPlayer = 'O';
+    currentPlayer = aiSymbol;
     statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
     setTimeout(handleAIMove, 500); // AI move after delay
   }
@@ -70,7 +92,6 @@ function checkGameResult() {
 function handleAIMove() {
   if (!gameActive) return;
 
-  // Get empty cells
   const emptyCells = boardState
     .map((value, index) => (value === '' ? index : null))
     .filter(index => index !== null);
@@ -82,7 +103,7 @@ function handleAIMove() {
 
     checkGameResult();
     if (gameActive) {
-      currentPlayer = 'X';
+      currentPlayer = playerSymbol;
       statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
     }
   }
@@ -98,6 +119,10 @@ function resetGame() {
     cell.textContent = '';
     cell.classList.remove('winning');
   });
+  playerSelection.style.display = 'block';
+  board.style.display = 'none';
+  resetButton.style.display = 'none';
+  statusDisplay.style.display = 'none';
 }
 
 // Event listeners for each cell and reset button
